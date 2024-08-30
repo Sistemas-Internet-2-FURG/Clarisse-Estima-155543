@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Editar Banda</title>
+</head>
+
+<body>
+    <h1>Editar Banda</h1>
+    <form method="post" action="{{ url_for('editar_bandas', id=banda[0]) }}">
+        <input type="text" name="nome" value="{{ banda[1] }}" required>
+        <button type="submit">Salvar</button>
+    </form>
+</body>
+
+</html>

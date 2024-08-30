@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Lista de Integrantes</title>
+</head>
+
+<body>
+    <h1>Integrantes e suas bandas</h1>
+    <ul>
+        {% for integrante in integrantes %}
+        <li>{{ integrante[1] }} - {{ integrante[2] }} -
+            <a href="{{ url_for('editar_integrantes', id=integrante[0]) }}">Editar</a> -
+            <a href="{{ url_for('deletar_integrante', id=integrante[0]) }}">Deletar</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Adicionar Novo Integrante em uma banda</h2>
+    <form method="post" action="{{ url_for('adicionar_integrantes') }}">
+        <input type="text" name="nome" placeholder="Nome do Integrante" required>
+        <select name="banda_id" required>
+            <option value="" disabled selected>Selecione uma Banda</option>
+            {% for banda in bandas %}
+            <option value="{{ banda[0] }}">{{ banda[1] }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Adicionar</button>
+    </form>
+</body>
+
+</html>

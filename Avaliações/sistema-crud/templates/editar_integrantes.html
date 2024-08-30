@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Editar integrante</title>
+</head>
+
+<body>
+    <h1>Editar integrante</h1>
+    <form method="post" action="{{ url_for('editar_integrantes', id=integrante[0]) }}">
+        <input type="text" name="nome" value="{{ integrante[1] }}" required>
+        <select name="banda_id" required>
+            {% for banda in bandas %}
+            <option value="{{ banda[0] }}" {% if banda[0]==integrante[2] %}selected{% endif %}>{{ banda[1] }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Salvar</button>
+    </form>
+</body>
+
+</html>
