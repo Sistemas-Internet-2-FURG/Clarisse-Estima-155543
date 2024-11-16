@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    <title>Dashboard</title>
+</head>
+
+<body>
+    <div id="body">
+        <h1>Lista de bandas</h1>
+        <ul id="bandasList"></ul>
+
+        <h1>Lista de integrantes</h1>
+        <ul id="integrantesList"></ul>
+    </div>
+
+    <script>
+        async function fetchWithAuth(endpoint, method = 'GET') {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Você precisa estar logado para acessar esta página.');
+                window.location.href = '/';
+                return null;
+            }
+
+            try {
+                const response = await fetch(endpoint, {
+                    method,
+                    headers: { 'Authorization': `Bearer ${token}` },
+                });
+
+                if (response.ok) {
+                    return await response.json();
+                } else {
+                    const errorData = await response.json();
+                    alert(errorData.message || `Erro ao acessar ${endpoint}.`);
+                    return null;
+                }
+            } catch (error) {
+                alert('Erro de conexão com o servidor.');
+                return null;
+            }
+        }
+
+        function renderList(items, elementId, formatter) {
+            const listElement = document.getElementById(elementId);
+            listElement.innerHTML = '';
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = formatter(item);
+                listElement.appendChild(li);
+            });
+        }
+
+        async function getBandas() {
+            const bandas = await fetchWithAuth('/bandas');
+            if (bandas) {
+                renderList(bandas, 'bandasList', banda => banda[1]);
+            }
+        }
+
+        async function getIntegrantes() {
+            const integrantes = await fetchWithAuth('/integrantes');
+            if (integrantes) {
+                renderList(integrantes, 'integrantesList', integrante => `${integrante[1]} - ${integrante[2]}`);
+            }
+        }
+
+        window.onload = () => {
+            getBandas();
+            getIntegrantes();
+        };
+
+    </script>
+</body>
+
+</html>

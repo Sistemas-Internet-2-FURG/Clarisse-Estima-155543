@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}">
+</head>
+
+<body>
+    <div id="body">
+        <h1>Cadastrar novo usuário</h1>
+
+        <form id="registerForm">
+        <input type="email" id="registerEmail" placeholder="Email" required aria-label="Email">
+        <input type="password" id="registerPassword" placeholder="Senha" required aria-label="Senha">
+
+        <div id="buttons">
+            <button type="submit" id="registerButton">Registrar</button>
+            <button type="button" id="cancelRegister" onclick="window.location.href='/'">Cancelar</button>
+        </div>
+        </form>
+    </div>
+
+    <script>
+        const registerButton = document.getElementById("registerButton");
+
+        document.getElementById("registerForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById("registerEmail").value;
+            const password = document.getElementById("registerPassword").value;
+
+            if (!email || !password) {
+                showMessage('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage(data.message, true);
+                } else {
+                    showMessage(data.message || 'Erro no registro.');
+                }
+            } catch (error) {
+                showMessage('Erro ao conectar com o servidor.');
+            }
+            
+        });
+
+        function showMessage(message, redirect = false) {
+            alert(message);
+            if (redirect) window.location.href = '/';
+        }
+
+    </script>
+</body>
+
+</html>

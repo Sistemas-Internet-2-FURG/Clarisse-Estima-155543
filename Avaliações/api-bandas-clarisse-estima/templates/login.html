@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+
+<body>
+    <div id="body">
+        <h1>Entrar na sua conta</h1>
+
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required aria-label="Email">
+            <input type="password" id="password" placeholder="Senha" required aria-label="Senha">
+            <button type="submit" id="loginButton">Entrar</button>
+        </form>
+
+
+        <h2>Não tem uma conta? <a href="register">Registrar</a></h2>
+    </div>
+
+    <script>
+
+        document.getElementById('loginForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showMessage('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            const loginButton = document.getElementById('loginButton');
+            loginButton.disabled = true;
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('token', data.access_token);
+                    showMessage('Login bem-sucedido!', true);
+                } else {
+                    showMessage(data.message || 'Erro no login.');
+                }
+            } catch (error) {
+                showMessage('Erro ao conectar com o servidor.');
+            } finally {
+                loginButton.disabled = false;
+            }
+        });
+
+        function showMessage(message, redirect = false) {
+            alert(message);
+            if (redirect) window.location.href = '/dashboard';
+        }
+
+    </script>
+</body>
+
+</html>
